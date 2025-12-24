@@ -17,7 +17,7 @@ export default function configureOpenApi(app: AppOpenAPi) {
 			url: "/api/v1/doc",
 			theme: "kepler",
 			pageTitle: "Todo API",
-			layout: "modern",
+			layout: "classic",
 			defaultHttpClient: {
 				targetKey: "node",
 				clientKey: "fetch",
