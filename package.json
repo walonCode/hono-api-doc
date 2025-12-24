@@ -1,6 +1,7 @@
 {
 	"name": "hono-api-doc",
 	"type": "module",
+	"version": "1.0.0",
 	"scripts": {
 		"dev": "tsx watch ./index.ts",
 		"build": "tsc",
@@ -15,6 +16,7 @@
 	"dependencies": {
 		"@hono/node-server": "^1.19.6",
 		"@hono/zod-openapi": "^1.2.0",
+		"@scalar/hono-api-reference": "^0.9.30",
 		"better-sqlite3": "^12.5.0",
 		"dotenv": "^17.2.3",
 		"drizzle-orm": "^0.45.1",

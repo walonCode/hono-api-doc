@@ -1,37 +1,17 @@
 import createApp from "@/lib/create-app.js";
-import onError from "@/middlewares/onError.js";
+import auth from "@/routes/auth/auth.index.js";
+import index from "@/routes/index.route.js";
+import todo from "@/routes/todo/todo.index.js";
+import configureOpenApi from "./lib/configure-openapi-app.js";
 
 const app = createApp();
 
-//not found to return a good json response
-app.notFound((c) => {
-	return c.json(
-		{
-			ok: false,
-			message: `${c.req.url} Not Found`,
-		},
-		404,
-	);
-});
+const routes = [index, todo, auth];
 
-//onError
-app.onError(onError);
+configureOpenApi(app);
 
-//home route
-app.get("/", (c) => {
-	return c.json(
-		{
-			ok: true,
-			message: "Hello",
-		},
-		200,
-	);
-});
-
-//error route
-app.get("/error", (c) => {
-	c.status(422);
-	throw new Error("ohh no ");
+routes.forEach((route) => {
+	app.route("/", route);
 });
 
 export default app;
