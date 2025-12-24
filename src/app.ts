@@ -1,20 +1,7 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
-import type { PinoLogger } from "hono-pino";
-import onError from "./middlewares/onError.js";
-import pinologger from "./middlewares/pinoLogger.js";
-import serveEmojiFavicon from "./middlewares/server-favicon.js";
+import createApp from "@/lib/create-app.js";
+import onError from "@/middlewares/onError.js";
 
-interface AppBindings {
-	Variables: {
-		logger: PinoLogger;
-	};
-}
-
-const app = new OpenAPIHono<AppBindings>().basePath("/api/v1");
-
-//middleware
-app.use(pinologger());
-app.use(serveEmojiFavicon("🖥"));
+const app = createApp();
 
 //not found to return a good json response
 app.notFound((c) => {
