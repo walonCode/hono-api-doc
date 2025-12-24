@@ -7,6 +7,7 @@ const envSchema = z.object({
 	NODE_ENV: z
 		.enum(["development", "production", "preview"])
 		.default("development"),
+	LOG_LEVEL:z.string().default("debug") 
 });
 
 export const env = envSchema.parse(process.env);
