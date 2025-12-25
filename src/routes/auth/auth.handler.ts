@@ -7,11 +7,13 @@ import { userTable } from "@/db/schema.js";
 import type { AppRouteHandler } from "@/lib/types.js";
 import type { LoginRoute, SignupRoute } from "./auth.route.js";
 
+const TIME_EXP = Math.floor(Date.now() / 1000) + 24 * 60 * 60 * 1;
+
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
 	try {
 		const { username, password } = c.req.valid("json");
 
-		//checkign to see if the user exist 
+		//checkign to see if the user exist
 		const [userExists] = await db
 			.select()
 			.from(userTable)
@@ -34,7 +36,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
 		//creating the token
 		const token = await jwt.sign(
-			{ id: userExists.id, exp: 24 * 60 * 60 * 1 },
+			{ id: userExists.id, exp: TIME_EXP },
 			env.JWT_SECRET,
 		);
 
@@ -102,7 +104,7 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
 			.execute();
 
 		const token = await jwt.sign(
-			{ id: newUser.id, exp: 24 * 60 * 60 * 1 },
+			{ id: newUser.id, exp: TIME_EXP },
 			env.JWT_SECRET,
 		);
 

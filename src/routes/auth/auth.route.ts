@@ -15,7 +15,7 @@ export const login = createRoute({
 					}),
 				},
 			},
-			required:true,
+			required: true,
 		},
 	},
 
@@ -77,7 +77,7 @@ export const signup = createRoute({
 					}),
 				},
 			},
-			required:true,
+			required: true,
 		},
 	},
 
