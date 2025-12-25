@@ -3,6 +3,12 @@ import packageJSON from "../../package.json" with { type: "json" };
 import type { AppOpenAPi } from "./types.js";
 
 export default function configureOpenApi(app: AppOpenAPi) {
+	app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
+		type: "http",
+		scheme: "bearer",
+		bearerFormat: "JWT",
+	});
+
 	app.doc("/doc", {
 		openapi: "3.0.0",
 		info: {
