@@ -5,7 +5,7 @@ import configureOpenApi from "./lib/configure-openapi-app.js";
 
 const app = createApp();
 
-const routes = [auth,todo];
+const routes = [auth, todo];
 
 configureOpenApi(app);
 

@@ -1,7 +1,7 @@
-import { config } from "dotenv"
+import { config } from "dotenv";
 import { z } from "zod";
 
-config()
+config();
 
 const envSchema = z.object({
 	DATABASE_URL: z.string().min(1),
@@ -10,6 +10,7 @@ const envSchema = z.object({
 		.enum(["development", "production", "preview"])
 		.default("development"),
 	LOG_LEVEL: z.string().default("debug"),
+	JWT_SECRET: z.string().min(1),
 });
 
 export const env = envSchema.parse(process.env);

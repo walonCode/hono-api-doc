@@ -3,7 +3,7 @@ import * as handler from "./todo.handlers.js";
 import * as route from "./todo.route.js";
 
 const router = createRouter()
-  .basePath("/todo")
-  .openapi(route.allTodos, handler.allTodo);
+	.basePath("/todo")
+	.openapi(route.allTodos, handler.allTodo);
 
 export default router;

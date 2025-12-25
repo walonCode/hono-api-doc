@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import "dotenv/config"
+import "dotenv/config";
 
 export default defineConfig({
 	out: "./src/db/migrations",
@@ -8,6 +8,6 @@ export default defineConfig({
 	strict: true,
 	verbose: true,
 	dbCredentials: {
-		url:process.env.DATABASE_URL!
+		url: process.env.DATABASE_URL!,
 	},
 });

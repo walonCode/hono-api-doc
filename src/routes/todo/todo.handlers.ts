@@ -1,4 +1,3 @@
-import { env } from "@/config/env.js";
 import type { AppRouteHandler } from "@/lib/types.js";
 import type { AllTodo } from "./todo.route.js";
 
