@@ -1,29 +1,56 @@
+import bcrypt from "bcryptjs";
+import { and, eq } from "drizzle-orm";
+import * as jwt from "hono/jwt";
 import { env } from "@/config/env.js";
+import { db } from "@/db/index.js";
+import { userTable } from "@/db/schema.js";
 import type { AppRouteHandler } from "@/lib/types.js";
 import type { LoginRoute, SignupRoute } from "./auth.route.js";
 
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
 	try {
-		const { username, password } = await c.req.json();
-		if (!username || !password)
+		const { username, password } = c.req.valid("json");
+
+		//checkign to see if the user exist 
+		const [userExists] = await db
+			.select()
+			.from(userTable)
+			.where(eq(userTable.username, username))
+			.limit(1)
+			.execute();
+
+		//checkng to see it the password match
+		const passwordMatch = await bcrypt.compare(password, userExists.password);
+
+		if (!userExists || !passwordMatch) {
 			return c.json(
 				{
 					ok: false,
-					message: "invalid user",
+					message: "Invalid username or password",
 				},
-				404,
+				401,
 			);
+		}
 
+		//creating the token
+		const token = await jwt.sign(
+			{ id: userExists.id, exp: 24 * 60 * 60 * 1 },
+			env.JWT_SECRET,
+		);
+
+		//success login result
 		return c.json(
 			{
 				ok: true,
 				message: "user login",
-				token: "yppppppp",
+				accessToken: token,
 			},
 			200,
 		);
 	} catch (error) {
-		env.NODE_ENV === "development" ? console.log(error) : "";
+		env.NODE_ENV === "development"
+			? c.var.logger.error(`Error from the login route ${error}`)
+			: "";
 		return c.json(
 			{
 				ok: false,
@@ -36,26 +63,62 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
 export const signup: AppRouteHandler<SignupRoute> = async (c) => {
 	try {
-		const { username, password, email } = await c.req.json();
-		if (!username || !password || !email)
+		const { username, password, email } = c.req.valid("json");
+
+		//checking if the user already exist
+		const userExists = (
+			await db
+				.select()
+				.from(userTable)
+				.where(
+					and(eq(userTable.email, email), eq(userTable.username, username)),
+				)
+				.limit(1)
+				.execute()
+		)[0];
+
+		if (userExists) {
 			return c.json(
 				{
 					ok: false,
-					message: "invalid user",
+					message: "User with that email or username already exists",
 				},
-				404,
+				409,
 			);
+		}
 
+		//password hashed
+		const passwordHashed = await bcrypt.hash(password, 10);
+
+		//creating the user
+		const [newUser] = await db
+			.insert(userTable)
+			.values({
+				username,
+				password: passwordHashed,
+				email,
+			})
+			.returning()
+			.execute();
+
+		const token = await jwt.sign(
+			{ id: newUser.id, exp: 24 * 60 * 60 * 1 },
+			env.JWT_SECRET,
+		);
+
+		//returning the 201 success
 		return c.json(
 			{
 				ok: true,
 				message: "user signup successfull",
-				// token: "yppppppp",
+				accessToken: token,
 			},
 			201,
 		);
 	} catch (error) {
-		env.NODE_ENV === "development" ? console.log(error) : "";
+		env.NODE_ENV === "development"
+			? c.var.logger.error(`Error from the signup route: ${error}`)
+			: "";
 		return c.json(
 			{
 				ok: false,

@@ -1,19 +1,21 @@
-import { createRoute, z } from "node_modules/@hono/zod-openapi/dist/index.cjs";
+import { createRoute, z } from "@hono/zod-openapi";
 
 export const login = createRoute({
 	path: "/login",
 	method: "post",
 	tags: ["Auth"],
 
-	requestBody: {
-		required: true,
-		content: {
-			"application/json": {
-				schema: z.object({
-					username: z.string().min(1),
-					password: z.string().min(8),
-				}),
+	request: {
+		body: {
+			content: {
+				"application/json": {
+					schema: z.object({
+						username: z.string().min(1),
+						password: z.string().min(8),
+					}),
+				},
 			},
+			required:true,
 		},
 	},
 
@@ -24,15 +26,15 @@ export const login = createRoute({
 				"application/json": {
 					schema: z.object({
 						ok: z.boolean(),
-						message: z.string(),
-						token: z.string(),
+						message: z.string().min(1),
+						accessToken: z.string().min(1),
 					}),
 				},
 			},
 		},
 
-		403: {
-			description: "User not found",
+		401: {
+			description: "Invalid email or password",
 			content: {
 				"application/json": {
 					schema: z.object({
@@ -64,16 +66,18 @@ export const signup = createRoute({
 	method: "post",
 	tags: ["Auth"],
 
-	requestBody: {
-		required: true,
-		content: {
-			"application/json": {
-				schema: z.object({
-					username: z.string().min(1),
-					password: z.string().min(8),
-					email: z.email(),
-				}),
+	request: {
+		body: {
+			content: {
+				"application/json": {
+					schema: z.object({
+						username: z.string().min(1),
+						password: z.string().min(8),
+						email: z.email(),
+					}),
+				},
 			},
+			required:true,
 		},
 	},
 
@@ -84,15 +88,15 @@ export const signup = createRoute({
 				"application/json": {
 					schema: z.object({
 						ok: z.boolean(),
-						message: z.string(),
-						// token: z.string(),
+						message: z.string().min(1),
+						accessToken: z.string().min(1),
 					}),
 				},
 			},
 		},
 
-		404: {
-			description: "User already exist",
+		409: {
+			description: "User with that email or password already exists",
 			content: {
 				"application/json": {
 					schema: z.object({
