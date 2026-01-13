@@ -6,13 +6,13 @@ import * as route from "./todo.route.js";
 
 const router = createRouter().basePath("/todo");
 
-router.use(authMiddleware);
-router.use(
-	rateLimitByUser({
-		limit: 10,
-		windowMs: 2,
-	}),
-);
+// router.use(authMiddleware);
+// router.use(
+// 	rateLimitByUser({
+// 		limit: 10,
+// 		windowMs: 2,
+// 	}),
+// );
 
 router
 	.openapi(route.allTodos, handler.allTodo)
